@@ -1,0 +1,32 @@
+import { Link, useLocation } from 'react-router';
+import { Zap, User } from 'lucide-react';
+
+export function Header() {
+  const location = useLocation();
+  const isStartPage = location.pathname === '/';
+
+  return (
+    <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
+      <div className="max-w-7xl mx-auto px-6 py-4">
+        <div className="flex items-center justify-between">
+          <Link to="/" className="flex items-center gap-3 group">
+            <div className="w-10 h-10 bg-gradient-to-br from-primary to-secondary rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+              <Zap className="w-6 h-6 text-white" />
+            </div>
+            <span className="text-2xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">FreelanceHub</span>
+          </Link>
+
+          {!isStartPage && (
+            <Link
+              to="/my-profile"
+              className="flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-primary to-secondary text-white rounded-xl hover:shadow-lg transition-all hover:scale-105"
+            >
+              <User className="w-4 h-4" />
+              Мой профиль
+            </Link>
+          )}
+        </div>
+      </div>
+    </header>
+  );
+}

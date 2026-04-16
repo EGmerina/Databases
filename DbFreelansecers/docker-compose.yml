@@ -1,0 +1,63 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: dbfreelancers-postgres
+    environment:
+      POSTGRES_DB: freelancedb
+      POSTGRES_USER: freelancer_user
+      POSTGRES_PASSWORD: freelancer_pass
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U freelancer_user -d freelancedb"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build:
+      context: ./backend
+    container_name: dbfreelancers-backend
+    working_dir: /app
+    command: sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    environment:
+      DB_ENGINE: "django.db.backends.postgresql"
+      DJANGO_DEBUG: "true"
+      DJANGO_ALLOWED_HOSTS: "localhost,127.0.0.1,0.0.0.0,backend"
+      DJANGO_CORS_ALLOWED_ORIGINS: "http://localhost:5173,http://127.0.0.1:5173"
+      DJANGO_CSRF_TRUSTED_ORIGINS: "http://localhost:5173,http://127.0.0.1:5173"
+      POSTGRES_DB: "freelancedb"
+      POSTGRES_USER: "freelancer_user"
+      POSTGRES_PASSWORD: "freelancer_pass"
+      POSTGRES_HOST: "db"
+      POSTGRES_PORT: "5432"
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+    depends_on:
+      db:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: dbfreelancers-frontend
+    working_dir: /app
+    command: sh -c "npm install && npm run dev -- --host 0.0.0.0"
+    environment:
+      VITE_API_URL: "/graphql/"
+      VITE_BACKEND_PROXY_TARGET: "http://backend:8000"
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - frontend_node_modules:/app/node_modules
+    depends_on:
+      - backend
+
+volumes:
+  frontend_node_modules:
+  postgres_data:
