@@ -2,9 +2,7 @@ from django.db import models
 
 class Contract(models.Model):
     contract_id = models.AutoField(primary_key=True)
-    # Связь 1 к 1: Один заказ = один контракт
     order = models.OneToOneField('orders.Order', on_delete=models.CASCADE, related_name='contract')
-    # Один фрилансер может иметь много контрактов
     freelancer = models.ForeignKey('users.Freelancer', on_delete=models.CASCADE, related_name='contracts')
     
     status = models.CharField(max_length=50, default="активен", verbose_name="Статус")
@@ -12,7 +10,6 @@ class Contract(models.Model):
     payment_amount = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Размер платы")
     deadline = models.DateTimeField(verbose_name="Срок выполнения")
     
-    # Оценки могут быть пустыми (null=True), пока контракт не завершен
     employer_rating = models.IntegerField(null=True, blank=True, verbose_name="Оценка от заказчика")
     freelancer_rating = models.IntegerField(null=True, blank=True, verbose_name="Оценка от фрилансера")
 

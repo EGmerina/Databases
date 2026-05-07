@@ -9,7 +9,6 @@ from apps.users.models import User, Freelancer
 class UserQueries:
     @strawberry.field
     def me(self, info: Info) -> Optional[UserType]:
-        # Логика получения текущего авторизованного пользователя
         return info.context.request.user if info.context.request.user.is_authenticated else None
 
     @strawberry.field

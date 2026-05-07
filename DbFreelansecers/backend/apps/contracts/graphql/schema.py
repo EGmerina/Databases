@@ -5,19 +5,16 @@ from apps.contracts.models import Contract, Transaction
 
 @strawberry.type
 class ContractQueries:
-    # Получить конкретный контракт по ID
     @strawberry.field
     def contract_by_id(self, contract_id: int) -> Optional[ContractType]:
         return Contract.objects.filter(contract_id=contract_id).first()
 
-    # Получить все контракты конкретного фрилансера (для личного кабинета)
     @strawberry.field
     def freelancer_contracts(self, freelancer_id: int) -> List[ContractType]:
         return Contract.objects.filter(freelancer_id=freelancer_id)
 
 @strawberry.type
 class ContractMutations:
-    # Мутация для создания контракта
     @strawberry.mutation
     def create_contract(
         self, 
@@ -26,7 +23,6 @@ class ContractMutations:
         payment_amount: float, 
         deadline: str
     ) -> ContractType:
-        # Создаем контракт
         contract = Contract.objects.create(
             order_id=order_id,
             freelancer_id=freelancer_id,
@@ -35,7 +31,6 @@ class ContractMutations:
             status="активен"
         )
         
-        # Автоматически создаем первую транзакцию (резервирование средств)
         Transaction.objects.create(
             contract=contract,
             amount=payment_amount,
@@ -44,7 +39,6 @@ class ContractMutations:
         
         return contract
 
-    # Мутация для завершения контракта с выставлением оценок
     @strawberry.mutation
     def finish_contract(
         self,
@@ -62,7 +56,6 @@ class ContractMutations:
             
         contract.save()
         
-        # Обновляем статус транзакции на "выплачено"
         Transaction.objects.filter(contract=contract, status="зарезервировано").update(status="выплачено")
         
         return contract
