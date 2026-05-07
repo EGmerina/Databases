@@ -192,13 +192,13 @@ ORDER_BLUEPRINTS = [
         "deadline_days": 21,
         "responses": [
             {"freelancer_email": "katya.design@example.com", "title": "Сделаю UX-аудит, карту экранов и новый UI-kit.", "status": "принят"},
-            {"freelancer_email": "irina.brand@example.com", "title": "Помогу с визуальной частью, если нужен упор на бренд.", "status": "рассматривается"},
+            {"freelancer_email": "irina.brand@example.com", "title": "Помогу с визуальной частью, если нужен упор на бренд.", "status": "pending"},
         ],
         "contract": {
             "freelancer_email": "katya.design@example.com",
-            "status": "активен",
+            "status": "active",
             "payment_amount": Decimal("120000.00"),
-            "transaction_status": "зарезервировано",
+            "transaction_status": "pending",
         },
     },
     {
@@ -214,9 +214,9 @@ ORDER_BLUEPRINTS = [
         ],
         "contract": {
             "freelancer_email": "dmitry.fullstack@example.com",
-            "status": "завершен",
+            "status": "completed",
             "payment_amount": Decimal("210000.00"),
-            "transaction_status": "выплачено",
+            "transaction_status": "completed",
             "employer_rating": 5,
             "freelancer_rating": 5,
         },
@@ -233,9 +233,9 @@ ORDER_BLUEPRINTS = [
         ],
         "contract": {
             "freelancer_email": "olga.content@example.com",
-            "status": "активен",
+            "status": "active",
             "payment_amount": Decimal("85000.00"),
-            "transaction_status": "зарезервировано",
+            "transaction_status": "pending",
         },
     },
     {
@@ -247,13 +247,13 @@ ORDER_BLUEPRINTS = [
         "deadline_days": 25,
         "responses": [
             {"freelancer_email": "max.mobile@example.com", "title": "Соберу MVP на React Native и подключу аналитику событий.", "status": "принят"},
-            {"freelancer_email": "dmitry.fullstack@example.com", "title": "Могу помочь на уровне API и общей архитектуры.", "status": "рассматривается"},
+            {"freelancer_email": "dmitry.fullstack@example.com", "title": "Могу помочь на уровне API и общей архитектуры.", "status": "pending"},
         ],
         "contract": {
             "freelancer_email": "max.mobile@example.com",
-            "status": "активен",
+            "status": "active",
             "payment_amount": Decimal("175000.00"),
-            "transaction_status": "зарезервировано",
+            "transaction_status": "pending",
         },
     },
     {
@@ -265,13 +265,13 @@ ORDER_BLUEPRINTS = [
         "deadline_days": 18,
         "responses": [
             {"freelancer_email": "irina.brand@example.com", "title": "Сделаю айдентику, упаковку и визуальные макеты карточек.", "status": "принят"},
-            {"freelancer_email": "katya.design@example.com", "title": "Могу помочь с digital-носителями и лендингом запуска.", "status": "рассматривается"},
+            {"freelancer_email": "katya.design@example.com", "title": "Могу помочь с digital-носителями и лендингом запуска.", "status": "pending"},
         ],
         "contract": {
             "freelancer_email": "irina.brand@example.com",
-            "status": "завершен",
+            "status": "completed",
             "payment_amount": Decimal("140000.00"),
-            "transaction_status": "выплачено",
+            "transaction_status": "completed",
             "employer_rating": 5,
             "freelancer_rating": 4,
         },
@@ -284,7 +284,7 @@ ORDER_BLUEPRINTS = [
         "expected_payment": Decimal("110000.00"),
         "deadline_days": 10,
         "responses": [
-            {"freelancer_email": "dmitry.fullstack@example.com", "title": "Проведу аудит SQL и backend-слоя, подготовлю план оптимизации.", "status": "рассматривается"},
+            {"freelancer_email": "dmitry.fullstack@example.com", "title": "Проведу аудит SQL и backend-слоя, подготовлю план оптимизации.", "status": "pending"},
         ],
     },
 ]

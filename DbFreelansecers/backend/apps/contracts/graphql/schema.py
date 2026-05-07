@@ -28,13 +28,13 @@ class ContractMutations:
             freelancer_id=freelancer_id,
             payment_amount=payment_amount,
             deadline=deadline,
-            status="активен"
+            status="active"
         )
         
         Transaction.objects.create(
             contract=contract,
             amount=payment_amount,
-            status="зарезервировано"
+            status="pending"
         )
         
         return contract
@@ -48,7 +48,7 @@ class ContractMutations:
     ) -> ContractType:
         contract = Contract.objects.get(contract_id=contract_id)
         
-        contract.status = "завершен"
+        contract.status = "completed"
         if employer_rating is not None:
             contract.employer_rating = employer_rating
         if freelancer_rating is not None:
@@ -56,6 +56,6 @@ class ContractMutations:
             
         contract.save()
         
-        Transaction.objects.filter(contract=contract, status="зарезервировано").update(status="выплачено")
+        Transaction.objects.filter(contract=contract, status="pending").update(status="completed")
         
         return contract

@@ -52,10 +52,12 @@ class OrderMutations:
         order_id: int, 
         title: str
     ) -> OrderResponseType:
-        response = OrderResponse.objects.create(
+        response, _ = OrderResponse.objects.get_or_create(
             freelancer_id=freelancer_id,
             order_id=order_id,
-            title=title,
-            status="рассматривается" # Статус по умолчанию
+            defaults={
+                "title": title,
+                "status": "pending", # Статус по умолчанию
+            },
         )
         return response

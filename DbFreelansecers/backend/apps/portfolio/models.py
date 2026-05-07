@@ -14,3 +14,6 @@ class Portfolio(models.Model):
 
     def __str__(self):
         return f"Портфолио: {self.title} (ID: {self.album_id})"
+
+    class Meta:
+        db_table = "portfolios"

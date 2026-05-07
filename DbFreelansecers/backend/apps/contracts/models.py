@@ -5,7 +5,7 @@ class Contract(models.Model):
     order = models.OneToOneField('orders.Order', on_delete=models.CASCADE, related_name='contract')
     freelancer = models.ForeignKey('users.Freelancer', on_delete=models.CASCADE, related_name='contracts')
     
-    status = models.CharField(max_length=50, default="активен", verbose_name="Статус")
+    status = models.CharField(max_length=50, default="active", verbose_name="Статус")
     conclusion_date = models.DateTimeField(auto_now_add=True, verbose_name="Дата заключения")
     payment_amount = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Размер платы")
     deadline = models.DateTimeField(verbose_name="Срок выполнения")
@@ -16,12 +16,18 @@ class Contract(models.Model):
     def __str__(self):
         return f"Контракт #{self.contract_id} по заказу #{self.order_id}"
 
+    class Meta:
+        db_table = "contracts"
+
 class Transaction(models.Model):
     transaction_id = models.AutoField(primary_key=True)
     contract = models.ForeignKey(Contract, on_delete=models.CASCADE, related_name='transactions')
-    status = models.CharField(max_length=50, default="зарезервировано", verbose_name="Статус")
+    status = models.CharField(max_length=50, default="pending", verbose_name="Статус")
     transaction_date = models.DateTimeField(auto_now_add=True, verbose_name="Дата транзакции")
     amount = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Сумма")
 
     def __str__(self):
         return f"Транзакция #{self.transaction_id} на {self.amount}"
+
+    class Meta:
+        db_table = "transactions"

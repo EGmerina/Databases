@@ -10,10 +10,16 @@ class Order(models.Model):
     deadline = models.DateTimeField(verbose_name="Срок выполнения")
     publication_date = models.DateTimeField(auto_now_add=True, verbose_name="Дата публикации")
 
+    class Meta:
+        db_table = "orders"
+
 class OrderResponse(models.Model):
     response_id = models.AutoField(primary_key=True)
     freelancer = models.ForeignKey('users.Freelancer', on_delete=models.CASCADE, related_name='responses')
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='responses')
     title = models.CharField(max_length=255, verbose_name="Название/Текст отклика")
-    status = models.CharField(max_length=50, default="рассматривается", verbose_name="Статус")
+    status = models.CharField(max_length=50, default="pending", verbose_name="Статус")
     response_date = models.DateTimeField(auto_now_add=True, verbose_name="Дата отклика")
+
+    class Meta:
+        db_table = "order_responses"
