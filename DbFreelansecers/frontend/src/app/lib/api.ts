@@ -55,6 +55,42 @@ export type ContractCard = {
   freelancerRating: number | null;
 };
 
+export type ResponseCard = {
+  id: number;
+  title: string;
+  status: string;
+  responseDate: string;
+  projectTitle: string;
+  clientName: string;
+  expectedPayment: number;
+  deadline: string;
+  contract: ContractCard | null;
+};
+
+export type ProjectApplicant = {
+  responseId: number;
+  title: string;
+  status: string;
+  responseDate: string;
+  freelancerId: number;
+  fullName: string;
+  email: string;
+  phoneNumber: string;
+  skills: string[];
+  description: string;
+};
+
+export type EmployerProject = {
+  id: number;
+  title: string;
+  description: string;
+  requiredSkills: string[];
+  expectedPayment: number;
+  deadline: string;
+  publicationDate: string;
+  responses: ProjectApplicant[];
+};
+
 export type HomeStats = {
   freelancerCount: number;
   orderCount: number;
@@ -148,6 +184,25 @@ type ContractNode = {
   };
 };
 
+type OrderResponseNode = {
+  responseId: string;
+  title: string;
+  status: string;
+  responseDate: string;
+  order: OrderNode;
+  freelancer: FreelancerNode;
+};
+
+type FreelancerResponseSummaryNode = {
+  response: OrderResponseNode;
+  contract: ContractNode | null;
+};
+
+type EmployerOrderSummaryNode = {
+  order: OrderNode;
+  responses: OrderResponseNode[];
+};
+
 function splitSkills(skills: string) {
   return skills
     .split(/[,;\n]/)
@@ -220,6 +275,44 @@ function mapContract(node: ContractNode): ContractCard {
     orderTitle: node.order.title,
     employerRating: node.employerRating,
     freelancerRating: node.freelancerRating,
+  };
+}
+
+function mapResponse(node: OrderResponseNode, contract: ContractNode | null): ResponseCard {
+  return {
+    id: Number(node.responseId),
+    title: node.title,
+    status: node.status,
+    responseDate: node.responseDate,
+    projectTitle: node.order.title,
+    clientName: node.order.employer.user.fullName,
+    expectedPayment: Number(node.order.expectedPayment),
+    deadline: node.order.deadline,
+    contract: contract ? mapContract(contract) : null,
+  };
+}
+
+function mapEmployerProject(node: EmployerOrderSummaryNode): EmployerProject {
+  return {
+    id: Number(node.order.orderId),
+    title: node.order.title,
+    description: node.order.description,
+    requiredSkills: splitSkills(node.order.requiredSkills),
+    expectedPayment: Number(node.order.expectedPayment),
+    deadline: node.order.deadline,
+    publicationDate: node.order.publicationDate,
+    responses: node.responses.map((response) => ({
+      responseId: Number(response.responseId),
+      title: response.title,
+      status: response.status,
+      responseDate: response.responseDate,
+      freelancerId: Number(response.freelancer.freelancerId),
+      fullName: response.freelancer.user.fullName,
+      email: response.freelancer.user.email,
+      phoneNumber: response.freelancer.user.phoneNumber,
+      skills: splitSkills(response.freelancer.skills),
+      description: response.freelancer.description,
+    })),
   };
 }
 
@@ -460,6 +553,7 @@ export async function fetchMyProfileData(freelancerId: number) {
     freelancerById: FreelancerNode | null;
     freelancerPortfolio: PortfolioNode[];
     freelancerContracts: ContractNode[];
+    freelancerResponses: FreelancerResponseSummaryNode[];
   }>(
     `
       query MyProfile($freelancerId: Int!) {
@@ -497,6 +591,56 @@ export async function fetchMyProfileData(freelancerId: number) {
             }
           }
         }
+        freelancerResponses(freelancerId: $freelancerId) {
+          response {
+            responseId
+            title
+            status
+            responseDate
+            order {
+              orderId
+              title
+              description
+              requiredSkills
+              expectedPayment
+              deadline
+              publicationDate
+              employer {
+                description
+                user {
+                  fullName
+                }
+              }
+            }
+            freelancer {
+              freelancerId
+              skills
+              description
+              user {
+                fullName
+                email
+                phoneNumber
+              }
+            }
+          }
+          contract {
+            contractId
+            status
+            paymentAmount
+            deadline
+            conclusionDate
+            employerRating
+            freelancerRating
+            order {
+              title
+              employer {
+                user {
+                  fullName
+                }
+              }
+            }
+          }
+        }
       }
     `,
     { freelancerId },
@@ -511,7 +655,178 @@ export async function fetchMyProfileData(freelancerId: number) {
     profile: mapFreelancer(data.freelancerById),
     portfolio: data.freelancerPortfolio.map(mapPortfolio),
     contracts: data.freelancerContracts.map(mapContract),
+    responses: data.freelancerResponses.map((item) => mapResponse(item.response, item.contract)),
   };
+}
+
+export async function fetchEmployerProjects(employerId: number) {
+  const data = await graphqlRequest<{
+    employerOrders: EmployerOrderSummaryNode[];
+  }>(
+    `
+      query EmployerProjects($employerId: Int!) {
+        employerOrders(employerId: $employerId) {
+          order {
+            orderId
+            title
+            description
+            requiredSkills
+            expectedPayment
+            deadline
+            publicationDate
+            employer {
+              description
+              user {
+                fullName
+              }
+            }
+          }
+          responses {
+            responseId
+            title
+            status
+            responseDate
+            order {
+              orderId
+              title
+              description
+              requiredSkills
+              expectedPayment
+              deadline
+              publicationDate
+              employer {
+                description
+                user {
+                  fullName
+                }
+              }
+            }
+            freelancer {
+              freelancerId
+              skills
+              description
+              user {
+                fullName
+                email
+                phoneNumber
+              }
+            }
+          }
+        }
+      }
+    `,
+    { employerId },
+  );
+
+  return data.employerOrders.map(mapEmployerProject);
+}
+
+export async function deleteOrderResponse(responseId: number, freelancerId: number) {
+  const data = await graphqlRequest<{
+    deleteResponse: boolean;
+  }>(
+    `
+      mutation DeleteResponse($responseId: Int!, $freelancerId: Int!) {
+        deleteResponse(responseId: $responseId, freelancerId: $freelancerId)
+      }
+    `,
+    { responseId, freelancerId },
+  );
+
+  return data.deleteResponse;
+}
+
+export async function createContract(orderId: number, freelancerId: number, paymentAmount: number, deadline: string) {
+  const data = await graphqlRequest<{
+    createContract: ContractNode;
+  }>(
+    `
+      mutation CreateContract($orderId: Int!, $freelancerId: Int!, $paymentAmount: Float!, $deadline: String!) {
+        createContract(orderId: $orderId, freelancerId: $freelancerId, paymentAmount: $paymentAmount, deadline: $deadline) {
+          contractId
+          status
+          paymentAmount
+          deadline
+          conclusionDate
+          employerRating
+          freelancerRating
+          order {
+            title
+            employer {
+              user {
+                fullName
+              }
+            }
+          }
+        }
+      }
+    `,
+    { orderId, freelancerId, paymentAmount, deadline },
+  );
+
+  return mapContract(data.createContract);
+}
+
+export async function acceptContract(contractId: number, freelancerId: number) {
+  const data = await graphqlRequest<{
+    acceptContract: ContractNode;
+  }>(
+    `
+      mutation AcceptContract($contractId: Int!, $freelancerId: Int!) {
+        acceptContract(contractId: $contractId, freelancerId: $freelancerId) {
+          contractId
+          status
+          paymentAmount
+          deadline
+          conclusionDate
+          employerRating
+          freelancerRating
+          order {
+            title
+            employer {
+              user {
+                fullName
+              }
+            }
+          }
+        }
+      }
+    `,
+    { contractId, freelancerId },
+  );
+
+  return mapContract(data.acceptContract);
+}
+
+export async function rejectContract(contractId: number, freelancerId: number) {
+  const data = await graphqlRequest<{
+    rejectContract: ContractNode;
+  }>(
+    `
+      mutation RejectContract($contractId: Int!, $freelancerId: Int!) {
+        rejectContract(contractId: $contractId, freelancerId: $freelancerId) {
+          contractId
+          status
+          paymentAmount
+          deadline
+          conclusionDate
+          employerRating
+          freelancerRating
+          order {
+            title
+            employer {
+              user {
+                fullName
+              }
+            }
+          }
+        }
+      }
+    `,
+    { contractId, freelancerId },
+  );
+
+  return mapContract(data.rejectContract);
 }
 
 export async function fetchHomeStats() {

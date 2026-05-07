@@ -75,17 +75,7 @@ export function FreelancerProfilePage() {
                     <span className="text-muted-foreground text-sm">профиль</span>
                   </div>
 
-                  <a
-                    href={`mailto:${freelancer.email}`}
-                    className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-primary to-secondary text-white rounded-xl hover:shadow-lg transition-all hover:scale-105"
-                  >
-                    <Mail className="w-4 h-4" />
-                    Связаться
-                  </a>
-                  <button className="w-full flex items-center justify-center gap-2 px-6 py-3 border border-border text-foreground rounded-xl hover:bg-muted transition-all">
-                    <Heart className="w-4 h-4" />
-                    Добавить в избранное
-                  </button>
+                
                 </div>
               </div>
             </div>
