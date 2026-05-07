@@ -55,9 +55,7 @@ export function MyProfilePage() {
       <div className="max-w-6xl mx-auto">
         <div className="mb-12">
           <h1 className="text-4xl font-bold text-primary mb-3">Мой профиль</h1>
-          <p className="text-muted-foreground">
-            Данные загружаются из PostgreSQL для авторизованного пользователя.
-          </p>
+         
         </div>
 
         {loading && <p className="text-muted-foreground">Загружаем профиль...</p>}

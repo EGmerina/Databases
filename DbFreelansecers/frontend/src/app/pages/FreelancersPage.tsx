@@ -50,10 +50,7 @@ export function FreelancersPage() {
                       </h3>
                       <p className="mt-1 text-muted-foreground">{freelancer.shortDescription}</p>
                     </div>
-                    <div className="rounded-xl bg-gradient-to-r from-primary/10 to-secondary/10 px-4 py-3 text-sm text-primary">
-                      <div className="font-semibold">{freelancer.skills.length} навыков</div>
-                      <div className="text-muted-foreground">Открыт к сотрудничеству</div>
-                    </div>
+                   
                   </div>
 
                   <div className="mb-4 flex flex-wrap gap-2">
@@ -74,7 +71,7 @@ export function FreelancersPage() {
                       <span>{freelancer.phoneNumber}</span>
                     </div>
                     <div className="md:ml-auto flex items-center gap-2 text-primary">
-                      <Sparkles className="h-4 w-4" />
+      
                       <span className="font-medium">Открыть профиль</span>
                       <ArrowRight className="h-4 w-4" />
                     </div>

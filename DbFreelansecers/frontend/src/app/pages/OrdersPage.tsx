@@ -76,10 +76,7 @@ export function OrdersPage() {
                 <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
                   <div className="flex-1">
                     <div className="mb-3 flex flex-wrap items-center gap-3">
-                      <span className="inline-flex items-center gap-1.5 rounded-lg bg-gradient-to-r from-primary/10 to-secondary/10 px-3 py-1 text-sm font-medium text-primary">
-                        <Tag className="h-3.5 w-3.5" />
-                        Заказ #{order.id}
-                      </span>
+                      
                       <span className="text-sm text-muted-foreground">
                         Опубликован {formatDate(order.publicationDate)}
                       </span>
