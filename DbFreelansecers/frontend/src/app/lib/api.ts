@@ -61,11 +61,45 @@ export type HomeStats = {
   topFreelancers: FreelancerCard[];
 };
 
+export type CurrentUser = {
+  userId: number;
+  fullName: string;
+  email: string;
+  phoneNumber: string;
+  freelancerId: number | null;
+  employerId: number | null;
+};
+
+export type LoginInput = {
+  email: string;
+  password: string;
+};
+
+export type RegisterInput = {
+  fullName: string;
+  email: string;
+  phoneNumber: string;
+  password: string;
+  skills?: string;
+  description?: string;
+};
+
 type FreelancerNode = {
   freelancerId: string;
   skills: string;
   description: string;
   user: {
+    fullName: string;
+    email: string;
+    phoneNumber: string;
+  };
+};
+
+type AuthPayloadNode = {
+  freelancerId: string | null;
+  employerId: string | null;
+  user: {
+    userId: string;
     fullName: string;
     email: string;
     phoneNumber: string;
@@ -189,6 +223,17 @@ function mapContract(node: ContractNode): ContractCard {
   };
 }
 
+function mapCurrentUser(node: AuthPayloadNode): CurrentUser {
+  return {
+    userId: Number(node.user.userId),
+    fullName: node.user.fullName,
+    email: node.user.email,
+    phoneNumber: node.user.phoneNumber,
+    freelancerId: node.freelancerId === null ? null : Number(node.freelancerId),
+    employerId: node.employerId === null ? null : Number(node.employerId),
+  };
+}
+
 async function graphqlRequest<T>(query: string, variables?: Record<string, unknown>) {
   const response = await fetch(GRAPHQL_URL, {
     method: 'POST',
@@ -215,17 +260,6 @@ async function graphqlRequest<T>(query: string, variables?: Record<string, unkno
   return payload.data;
 }
 
-async function resolveAvailableFreelancerId() {
-  const freelancers = await fetchFreelancers();
-  const firstFreelancer = freelancers[0];
-
-  if (!firstFreelancer) {
-    throw new Error('В базе нет фрилансеров для демо-действий');
-  }
-
-  return firstFreelancer.id;
-}
-
 export async function fetchFreelancers() {
   const data = await graphqlRequest<{
     allFreelancers: FreelancerNode[];
@@ -245,6 +279,96 @@ export async function fetchFreelancers() {
   `);
 
   return data.allFreelancers.map(mapFreelancer);
+}
+
+export async function login(input: LoginInput) {
+  const data = await graphqlRequest<{
+    login: AuthPayloadNode;
+  }>(
+    `
+      mutation Login($email: String!, $password: String!) {
+        login(email: $email, password: $password) {
+          freelancerId
+          employerId
+          user {
+            userId
+            fullName
+            email
+            phoneNumber
+          }
+        }
+      }
+    `,
+    input,
+  );
+
+  return mapCurrentUser(data.login);
+}
+
+export async function register(input: RegisterInput) {
+  const data = await graphqlRequest<{
+    register: AuthPayloadNode;
+  }>(
+    `
+      mutation Register(
+        $fullName: String!
+        $email: String!
+        $phoneNumber: String!
+        $password: String!
+        $skills: String! = ""
+        $description: String! = ""
+      ) {
+        register(
+          fullName: $fullName
+          email: $email
+          phoneNumber: $phoneNumber
+          password: $password
+          skills: $skills
+          description: $description
+        ) {
+          freelancerId
+          employerId
+          user {
+            userId
+            fullName
+            email
+            phoneNumber
+          }
+        }
+      }
+    `,
+    {
+      ...input,
+      skills: input.skills ?? '',
+      description: input.description ?? '',
+    },
+  );
+
+  return mapCurrentUser(data.register);
+}
+
+export async function fetchCurrentUser(userId: number) {
+  const data = await graphqlRequest<{
+    currentUser: AuthPayloadNode | null;
+  }>(
+    `
+      query CurrentUser($userId: Int!) {
+        currentUser(userId: $userId) {
+          freelancerId
+          employerId
+          user {
+            userId
+            fullName
+            email
+            phoneNumber
+          }
+        }
+      }
+    `,
+    { userId },
+  );
+
+  return data.currentUser ? mapCurrentUser(data.currentUser) : null;
 }
 
 export async function fetchFreelancerProfile(id: number) {
@@ -312,8 +436,7 @@ export async function fetchOrders() {
   return data.allOrders.map(mapOrder);
 }
 
-export async function createOrderResponse(orderId: number, title: string, freelancerId?: number) {
-  const effectiveFreelancerId = freelancerId ?? (await resolveAvailableFreelancerId());
+export async function createOrderResponse(orderId: number, title: string, freelancerId: number) {
   const data = await graphqlRequest<{
     createResponse: {
       responseId: string;
@@ -326,14 +449,13 @@ export async function createOrderResponse(orderId: number, title: string, freela
         }
       }
     `,
-    { freelancerId: effectiveFreelancerId, orderId, title },
+    { freelancerId, orderId, title },
   );
 
   return Number(data.createResponse.responseId);
 }
 
-export async function fetchMyProfileData(freelancerId?: number) {
-  const effectiveFreelancerId = freelancerId ?? (await resolveAvailableFreelancerId());
+export async function fetchMyProfileData(freelancerId: number) {
   const data = await graphqlRequest<{
     freelancerById: FreelancerNode | null;
     freelancerPortfolio: PortfolioNode[];
@@ -377,7 +499,7 @@ export async function fetchMyProfileData(freelancerId?: number) {
         }
       }
     `,
-    { freelancerId: effectiveFreelancerId },
+    { freelancerId },
   );
 
   if (!data.freelancerById) {
@@ -385,7 +507,7 @@ export async function fetchMyProfileData(freelancerId?: number) {
   }
 
   return {
-    freelancerId: effectiveFreelancerId,
+    freelancerId,
     profile: mapFreelancer(data.freelancerById),
     portfolio: data.freelancerPortfolio.map(mapPortfolio),
     contracts: data.freelancerContracts.map(mapContract),
@@ -414,8 +536,4 @@ export function formatDate(value: string) {
     month: 'long',
     year: 'numeric',
   }).format(new Date(value));
-}
-
-export async function getDemoFreelancerId() {
-  return resolveAvailableFreelancerId();
 }

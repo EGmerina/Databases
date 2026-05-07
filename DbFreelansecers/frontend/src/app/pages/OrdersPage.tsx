@@ -1,21 +1,29 @@
 import { useState } from 'react';
 import { Clock, DollarSign, Tag, User } from 'lucide-react';
 import { createOrderResponse, fetchOrders, formatDate, formatMoney } from '../lib/api';
+import { useAuth } from '../lib/auth';
 import { useAsyncData } from '../lib/useAsyncData';
 
 export function OrdersPage() {
   const { data: orders, loading, error } = useAsyncData(fetchOrders, []);
+  const { currentUser } = useAuth();
   const [respondedOrders, setRespondedOrders] = useState<Set<number>>(new Set());
   const [submittingOrderId, setSubmittingOrderId] = useState<number | null>(null);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
   async function handleRespond(orderId: number, orderTitle: string) {
+    if (!currentUser?.freelancerId) {
+      setSubmitError('Войдите как фрилансер, чтобы отправить отклик');
+      return;
+    }
+
     try {
       setSubmittingOrderId(orderId);
       setSubmitError(null);
       await createOrderResponse(
         orderId,
         `Отклик по заказу "${orderTitle}"`,
+        currentUser.freelancerId,
       );
       setRespondedOrders((current) => new Set([...current, orderId]));
     } catch (submitErrorValue) {
@@ -113,14 +121,20 @@ export function OrdersPage() {
                   <div className="lg:ml-6 flex-shrink-0">
                     <button
                       onClick={() => handleRespond(order.id, order.title)}
-                      disabled={responded || submitting}
+                      disabled={responded || submitting || !currentUser?.freelancerId}
                       className={`rounded-xl px-8 py-3 font-semibold transition-all whitespace-nowrap ${
-                        responded || submitting
+                        responded || submitting || !currentUser?.freelancerId
                           ? 'cursor-not-allowed bg-muted text-muted-foreground'
                           : 'bg-gradient-to-r from-primary to-secondary text-white hover:scale-105 hover:shadow-lg'
                       }`}
                     >
-                      {responded ? 'Отклик отправлен ✓' : submitting ? 'Отправляем...' : 'Откликнуться'}
+                      {responded
+                        ? 'Отклик отправлен ✓'
+                        : submitting
+                          ? 'Отправляем...'
+                          : currentUser?.freelancerId
+                            ? 'Откликнуться'
+                            : 'Войдите для отклика'}
                     </button>
                   </div>
                 </div>

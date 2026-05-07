@@ -1,9 +1,10 @@
 import { Link, useLocation } from 'react-router';
-import { Zap, User, LogIn } from 'lucide-react';
+import { Zap, User, LogIn, LogOut } from 'lucide-react';
+import { useAuth } from '../lib/auth';
 
 export function Header() {
   const location = useLocation();
-  const isStartPage = location.pathname === '/';
+  const { currentUser, signOut } = useAuth();
   const isAuthPage = location.pathname === '/auth';
 
   return (
@@ -18,7 +19,7 @@ export function Header() {
           </Link>
           {!isAuthPage && (
             <div className="flex items-center gap-3">
-              {isStartPage && (
+              {!currentUser && (
                 <Link
                   to="/auth"
                   className="flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-primary to-secondary text-white rounded-xl hover:shadow-lg transition-all hover:scale-105"
@@ -27,14 +28,24 @@ export function Header() {
                   Вход
                 </Link>
               )}
-              {!isStartPage && (
-                <Link
-                  to="/my-profile"
-                  className="flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-primary to-secondary text-white rounded-xl hover:shadow-lg transition-all hover:scale-105"
-                >
-                  <User className="w-4 h-4" />
-                  Мой профиль
-                </Link>
+              {currentUser && (
+                <>
+                  <Link
+                    to="/my-profile"
+                    className="flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-primary to-secondary text-white rounded-xl hover:shadow-lg transition-all hover:scale-105"
+                  >
+                    <User className="w-4 h-4" />
+                    Мой профиль
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={signOut}
+                    className="flex items-center gap-2 px-4 py-2 border border-border text-foreground rounded-xl hover:bg-muted transition-all"
+                  >
+                    <LogOut className="w-4 h-4" />
+                    Выйти
+                  </button>
+                </>
               )}
             </div>)}
         </div>

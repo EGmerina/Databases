@@ -33,3 +33,13 @@ class Freelancer(models.Model):
 
     class Meta:
         db_table = "freelancers"
+
+class Authorization(models.Model):
+    auth_id = models.AutoField(primary_key=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='authorization')
+    user_login = models.CharField(max_length=255, unique=True, verbose_name="Логин")
+    password_hash = models.CharField(max_length=255, verbose_name="Хеш пароля")
+    last_login_time = models.DateTimeField(null=True, blank=True, verbose_name="Время последнего входа")
+
+    class Meta:
+        db_table = "authorizations"

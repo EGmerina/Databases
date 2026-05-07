@@ -1,5 +1,6 @@
 import strawberry
 from strawberry import auto
+from typing import Optional
 from apps.users.models import User, Employer, Freelancer
 
 @strawberry.django.type(User)
@@ -23,3 +24,9 @@ class FreelancerType:
     skills: auto
     description: auto
     user: UserType
+
+@strawberry.type
+class AuthPayload:
+    user: UserType
+    freelancer_id: Optional[int]
+    employer_id: Optional[int]

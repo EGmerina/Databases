@@ -19,7 +19,7 @@ export const router = createBrowserRouter([
       { path: 'search', Component: SearchPage },
       { path: 'my-profile', Component: MyProfilePage },
       { path: 'freelancer/:id', Component: FreelancerProfilePage },
-       { path: 'auth', Component: AuthPage },
+      { path: 'auth', Component: AuthPage },
     ],
   },
 ]);
