@@ -21,7 +21,6 @@ class ContractType:
     deadline: auto
     employer_rating: auto
     freelancer_rating: auto
-    
     order: OrderType
     freelancer: FreelancerType
     transactions: List[TransactionType]

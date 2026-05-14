@@ -30,18 +30,14 @@ class EmployerOrderSummary:
 
 @strawberry.type
 class OrderQueries:
-    # Получить все заказы (например, для ленты заказов)
     @strawberry.field
     def all_orders(self) -> List[OrderType]:
-        # В реальном проекте здесь добавляют сортировку (например, новые сверху)
         return Order.objects.all().order_by('-publication_date')
 
-    # Получить конкретный заказ по его ID (для страницы заказа)
     @strawberry.field
     def order_by_id(self, order_id: int) -> Optional[OrderType]:
         return Order.objects.filter(order_id=order_id).first()
 
-    # Получить все отклики к конкретному заказу (для заказчика)
     @strawberry.field
     def order_responses(self, order_id: int) -> List[OrderResponseType]:
         return OrderResponse.objects.filter(order_id=order_id)
@@ -83,7 +79,6 @@ class OrderQueries:
 
 @strawberry.type
 class OrderMutations:
-    # Мутация для создания нового заказа заказчиком
     @strawberry.mutation
     def create_order(
         self, 
@@ -105,7 +100,6 @@ class OrderMutations:
         )
         return order
 
-    # Мутация для отклика фрилансера на заказ
     @strawberry.mutation
     def create_response(
         self, 
@@ -118,7 +112,7 @@ class OrderMutations:
             order_id=order_id,
             defaults={
                 "title": title,
-                "status": "pending", # Статус по умолчанию
+                "status": "pending", 
             },
         )
         return response
