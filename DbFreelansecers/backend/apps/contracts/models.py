@@ -17,6 +17,7 @@ class Contract(models.Model):
         return f"Контракт #{self.contract_id} по заказу #{self.order_id}"
 
     class Meta:
+        managed = False
         db_table = "contracts"
 
 class Transaction(models.Model):
@@ -30,4 +31,5 @@ class Transaction(models.Model):
         return f"Транзакция #{self.transaction_id} на {self.amount}"
 
     class Meta:
+        managed = False
         db_table = "transactions"

@@ -34,16 +34,16 @@ INSERT INTO users (phone_number, full_name, birth_date, email, gender, status) V
 
 -- Авторизации (хеш пароля 'password123' для всех)
 INSERT INTO authorizations (user_id, user_login, password_hash, last_login_time) VALUES
-(1,  'dmitry_i',   '$2b$12$LJ3m4ys3GZfnYMz8kVsKaOTSCTOzqDQxSwO2YkODzHNYGVcFoOsLC', '2026-05-07 14:30:00'),
-(2,  'anna_p',     '$2b$12$LJ3m4ys3GZfnYMz8kVsKaOTSCTOzqDQxSwO2YkODzHNYGVcFoOsLC', '2026-05-08 09:15:00'),
-(3,  'alex_s',     '$2b$12$LJ3m4ys3GZfnYMz8kVsKaOTSCTOzqDQxSwO2YkODzHNYGVcFoOsLC', '2026-05-07 22:45:00'),
-(4,  'katya_k',    '$2b$12$LJ3m4ys3GZfnYMz8kVsKaOTSCTOzqDQxSwO2YkODzHNYGVcFoOsLC', '2026-05-08 07:00:00'),
-(5,  'andrey_n',   '$2b$12$LJ3m4ys3GZfnYMz8kVsKaOTSCTOzqDQxSwO2YkODzHNYGVcFoOsLC', '2026-05-06 18:20:00'),
-(6,  'olga_m',     '$2b$12$LJ3m4ys3GZfnYMz8kVsKaOTSCTOzqDQxSwO2YkODzHNYGVcFoOsLC', '2026-05-08 11:10:00'),
-(7,  'sergey_v',   '$2b$12$LJ3m4ys3GZfnYMz8kVsKaOTSCTOzqDQxSwO2YkODzHNYGVcFoOsLC', '2026-04-20 15:00:00'),
-(8,  'maria_s',    '$2b$12$LJ3m4ys3GZfnYMz8kVsKaOTSCTOzqDQxSwO2YkODzHNYGVcFoOsLC', '2026-05-08 08:30:00'),
-(9,  'pavel_z',    '$2b$12$LJ3m4ys3GZfnYMz8kVsKaOTSCTOzqDQxSwO2YkODzHNYGVcFoOsLC', '2026-05-07 16:55:00'),
-(10, 'yulia_f',    '$2b$12$LJ3m4ys3GZfnYMz8kVsKaOTSCTOzqDQxSwO2YkODzHNYGVcFoOsLC', '2026-05-08 06:40:00');
+(1,  'dmitry_i',   'pbkdf2_sha256$1200000$zAGBZWpmBiuamRdioqQahX$fkP7kK+LSR4ghzJfZ/veRqcUl7AuJlvh24LN4RdKVLE=', '2026-05-07 14:30:00'),
+(2,  'anna_p',     'pbkdf2_sha256$1200000$zAGBZWpmBiuamRdioqQahX$fkP7kK+LSR4ghzJfZ/veRqcUl7AuJlvh24LN4RdKVLE=', '2026-05-08 09:15:00'),
+(3,  'alex_s',     'pbkdf2_sha256$1200000$zAGBZWpmBiuamRdioqQahX$fkP7kK+LSR4ghzJfZ/veRqcUl7AuJlvh24LN4RdKVLE=', '2026-05-07 22:45:00'),
+(4,  'katya_k',    'pbkdf2_sha256$1200000$zAGBZWpmBiuamRdioqQahX$fkP7kK+LSR4ghzJfZ/veRqcUl7AuJlvh24LN4RdKVLE=', '2026-05-08 07:00:00'),
+(5,  'andrey_n',   'pbkdf2_sha256$1200000$zAGBZWpmBiuamRdioqQahX$fkP7kK+LSR4ghzJfZ/veRqcUl7AuJlvh24LN4RdKVLE=', '2026-05-06 18:20:00'),
+(6,  'olga_m',     'pbkdf2_sha256$1200000$zAGBZWpmBiuamRdioqQahX$fkP7kK+LSR4ghzJfZ/veRqcUl7AuJlvh24LN4RdKVLE=', '2026-05-08 11:10:00'),
+(7,  'sergey_v',   'pbkdf2_sha256$1200000$zAGBZWpmBiuamRdioqQahX$fkP7kK+LSR4ghzJfZ/veRqcUl7AuJlvh24LN4RdKVLE=', '2026-04-20 15:00:00'),
+(8,  'maria_s',    'pbkdf2_sha256$1200000$zAGBZWpmBiuamRdioqQahX$fkP7kK+LSR4ghzJfZ/veRqcUl7AuJlvh24LN4RdKVLE=', '2026-05-08 08:30:00'),
+(9,  'pavel_z',    'pbkdf2_sha256$1200000$zAGBZWpmBiuamRdioqQahX$fkP7kK+LSR4ghzJfZ/veRqcUl7AuJlvh24LN4RdKVLE=', '2026-05-07 16:55:00'),
+(10, 'yulia_f',    'pbkdf2_sha256$1200000$zAGBZWpmBiuamRdioqQahX$fkP7kK+LSR4ghzJfZ/veRqcUl7AuJlvh24LN4RdKVLE=', '2026-05-08 06:40:00');
 
 
 INSERT INTO employers (user_id, description) VALUES

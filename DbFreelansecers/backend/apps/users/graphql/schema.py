@@ -19,12 +19,8 @@ def build_auth_payload(user: User) -> AuthPayload:
 
 
 def password_matches(password: str, password_hash: str) -> bool:
-    if check_password(password, password_hash):
-        return True
-
-    # Seed data may contain demo hashes produced outside Django. Keep the
-    # fixture account usable without adding another password library.
-    return password == "password123" and password_hash.startswith("$2")
+    return check_password(password, password_hash)
+      
 
 @strawberry.type
 class UserQueries:

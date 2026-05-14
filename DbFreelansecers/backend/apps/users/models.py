@@ -15,6 +15,7 @@ class User(models.Model):
         return self.full_name
 
     class Meta:
+        managed = False
         db_table = "users"
 
 class Employer(models.Model):
@@ -23,6 +24,7 @@ class Employer(models.Model):
     description = models.TextField(verbose_name="Описание")  
 
     class Meta:
+        managed = False
         db_table = "employers"
 
 class Freelancer(models.Model):
@@ -32,6 +34,7 @@ class Freelancer(models.Model):
     description = models.TextField(verbose_name="Описание") 
 
     class Meta:
+        managed = False
         db_table = "freelancers"
 
 class Authorization(models.Model):
@@ -42,4 +45,5 @@ class Authorization(models.Model):
     last_login_time = models.DateTimeField(null=True, blank=True, verbose_name="Время последнего входа")
 
     class Meta:
+        managed = False
         db_table = "authorizations"

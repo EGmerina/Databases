@@ -16,4 +16,5 @@ class Portfolio(models.Model):
         return f"Портфолио: {self.title} (ID: {self.album_id})"
 
     class Meta:
+        managed = False
         db_table = "portfolios"

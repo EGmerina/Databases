@@ -11,6 +11,7 @@ class Order(models.Model):
     publication_date = models.DateTimeField(auto_now_add=True, verbose_name="Дата публикации")
 
     class Meta:
+        managed = False
         db_table = "orders"
 
 class OrderResponse(models.Model):
@@ -22,4 +23,5 @@ class OrderResponse(models.Model):
     response_date = models.DateTimeField(auto_now_add=True, verbose_name="Дата отклика")
 
     class Meta:
+        managed = False
         db_table = "order_responses"
