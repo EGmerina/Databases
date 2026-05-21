@@ -90,3 +90,56 @@ CREATE TABLE portfolios (
     file_links JSONB NOT NULL
 );
 
+CREATE OR REPLACE FUNCTION prevent_self_order_response()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF EXISTS (
+        SELECT 1
+        FROM orders o
+        JOIN employers e ON e.employer_id = o.employer_id
+        JOIN freelancers f ON f.freelancer_id = NEW.freelancer_id
+        WHERE o.order_id = NEW.order_id
+          AND e.user_id = f.user_id
+    ) THEN
+        RAISE EXCEPTION 'Freelancer cannot respond to their own order';
+    END IF;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trg_prevent_self_order_response
+BEFORE INSERT OR UPDATE OF freelancer_id, order_id ON order_responses
+FOR EACH ROW
+EXECUTE FUNCTION prevent_self_order_response();
+
+CREATE OR REPLACE FUNCTION prevent_self_contract()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF EXISTS (
+        SELECT 1
+        FROM orders o
+        JOIN employers e ON e.employer_id = o.employer_id
+        JOIN freelancers f ON f.freelancer_id = NEW.freelancer_id
+        WHERE o.order_id = NEW.order_id
+          AND e.user_id = f.user_id
+    ) THEN
+        RAISE EXCEPTION 'Employer cannot create a contract with themselves';
+    END IF;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trg_prevent_self_contract
+BEFORE INSERT OR UPDATE OF freelancer_id, order_id ON contracts
+FOR EACH ROW
+EXECUTE FUNCTION prevent_self_contract();
+
+CREATE INDEX idx_orders_publication_date ON orders (publication_date DESC);
+CREATE INDEX idx_orders_employer_publication_date ON orders (employer_id, publication_date DESC);
+CREATE INDEX idx_order_responses_order_response_date ON order_responses (order_id, response_date DESC);
+CREATE INDEX idx_order_responses_freelancer_response_date ON order_responses (freelancer_id, response_date DESC);
+CREATE INDEX idx_portfolios_freelancer_creation_date ON portfolios (freelancer_id, creation_date DESC);
+CREATE INDEX idx_contracts_freelancer ON contracts (freelancer_id);
+CREATE INDEX idx_transactions_contract_status ON transactions (contract_id, status);

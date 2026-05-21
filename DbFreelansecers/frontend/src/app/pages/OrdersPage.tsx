@@ -17,6 +17,12 @@ export function OrdersPage() {
       return;
     }
 
+    const order = orders?.find((item) => item.id === orderId);
+    if (order?.employerUserId === currentUser.userId) {
+      setSubmitError('Нельзя откликнуться на свой заказ');
+      return;
+    }
+
     try {
       setSubmittingOrderId(orderId);
       setSubmitError(null);
@@ -67,6 +73,8 @@ export function OrdersPage() {
           {orders?.map((order) => {
             const responded = respondedOrders.has(order.id);
             const submitting = submittingOrderId === order.id;
+            const isOwnOrder = order.employerUserId === currentUser?.userId;
+            const respondDisabled = responded || submitting || !currentUser?.freelancerId || isOwnOrder;
 
             return (
               <div
@@ -118,20 +126,22 @@ export function OrdersPage() {
                   <div className="lg:ml-6 flex-shrink-0">
                     <button
                       onClick={() => handleRespond(order.id, order.title)}
-                      disabled={responded || submitting || !currentUser?.freelancerId}
+                      disabled={respondDisabled}
                       className={`rounded-xl px-8 py-3 font-semibold transition-all whitespace-nowrap ${
-                        responded || submitting || !currentUser?.freelancerId
+                        respondDisabled
                           ? 'cursor-not-allowed bg-muted text-muted-foreground'
                           : 'bg-gradient-to-r from-primary to-secondary text-white hover:scale-105 hover:shadow-lg'
                       }`}
                     >
-                      {responded
-                        ? 'Отклик отправлен ✓'
-                        : submitting
-                          ? 'Отправляем...'
-                          : currentUser?.freelancerId
-                            ? 'Откликнуться'
-                            : 'Войдите для отклика'}
+                      {isOwnOrder
+                        ? 'Ваш заказ'
+                        : responded
+                          ? 'Отклик отправлен ✓'
+                          : submitting
+                            ? 'Отправляем...'
+                            : currentUser?.freelancerId
+                              ? 'Откликнуться'
+                              : 'Войдите для отклика'}
                     </button>
                   </div>
                 </div>

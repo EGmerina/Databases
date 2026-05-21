@@ -39,6 +39,7 @@ export type OrderCard = {
   expectedPayment: number;
   deadline: string;
   publicationDate: string;
+  employerUserId: number;
   employerName: string;
   employerDescription: string;
 };
@@ -73,6 +74,7 @@ export type ProjectApplicant = {
   status: string;
   responseDate: string;
   freelancerId: number;
+  userId: number;
   fullName: string;
   email: string;
   phoneNumber: string;
@@ -125,6 +127,7 @@ type FreelancerNode = {
   skills: string;
   description: string;
   user: {
+    userId: string;
     fullName: string;
     email: string;
     phoneNumber: string;
@@ -161,6 +164,7 @@ type OrderNode = {
   employer: {
     description: string;
     user: {
+      userId: string;
       fullName: string;
     };
   };
@@ -259,6 +263,7 @@ function mapOrder(node: OrderNode): OrderCard {
     expectedPayment: Number(node.expectedPayment),
     deadline: node.deadline,
     publicationDate: node.publicationDate,
+    employerUserId: Number(node.employer.user.userId),
     employerName: node.employer.user.fullName,
     employerDescription: node.employer.description,
   };
@@ -307,6 +312,7 @@ function mapEmployerProject(node: EmployerOrderSummaryNode): EmployerProject {
       status: response.status,
       responseDate: response.responseDate,
       freelancerId: Number(response.freelancer.freelancerId),
+      userId: Number(response.freelancer.user.userId),
       fullName: response.freelancer.user.fullName,
       email: response.freelancer.user.email,
       phoneNumber: response.freelancer.user.phoneNumber,
@@ -363,6 +369,7 @@ export async function fetchFreelancers() {
         skills
         description
         user {
+          userId
           fullName
           email
           phoneNumber
@@ -476,6 +483,7 @@ export async function fetchFreelancerProfile(id: number) {
           skills
           description
           user {
+            userId
             fullName
             email
             phoneNumber
@@ -519,6 +527,7 @@ export async function fetchOrders() {
         employer {
           description
           user {
+            userId
             fullName
           }
         }
@@ -562,6 +571,7 @@ export async function fetchMyProfileData(freelancerId: number) {
           skills
           description
           user {
+            userId
             fullName
             email
             phoneNumber
@@ -608,6 +618,7 @@ export async function fetchMyProfileData(freelancerId: number) {
               employer {
                 description
                 user {
+                  userId
                   fullName
                 }
               }
@@ -617,6 +628,7 @@ export async function fetchMyProfileData(freelancerId: number) {
               skills
               description
               user {
+                userId
                 fullName
                 email
                 phoneNumber
@@ -677,6 +689,7 @@ export async function fetchEmployerProjects(employerId: number) {
             employer {
               description
               user {
+                userId
                 fullName
               }
             }
@@ -697,6 +710,7 @@ export async function fetchEmployerProjects(employerId: number) {
               employer {
                 description
                 user {
+                  userId
                   fullName
                 }
               }
@@ -706,6 +720,7 @@ export async function fetchEmployerProjects(employerId: number) {
               skills
               description
               user {
+                userId
                 fullName
                 email
                 phoneNumber

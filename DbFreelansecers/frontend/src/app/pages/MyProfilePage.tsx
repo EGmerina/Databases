@@ -176,6 +176,11 @@ export function MyProfilePage() {
       return;
     }
 
+    if (selectedApplicant.userId === currentUser.userId) {
+      setActionError('Нельзя заключить контракт с самим собой');
+      return;
+    }
+
     setActionLoading(true);
     setActionError(null);
     try {
@@ -545,47 +550,56 @@ export function MyProfilePage() {
                     <p className="text-muted-foreground">На этот проект пока нет откликов.</p>
                   ) : (
                     <div className="space-y-4">
-                      {selectedProject.responses.map((applicant) => (
-                        <div key={applicant.responseId} className="border border-border rounded-xl p-5 hover:shadow-md transition-shadow">
-                          <div className="mb-4 flex items-start gap-4">
-                            <div className="w-16 h-16 bg-gradient-to-br from-primary/10 to-secondary/10 rounded-xl flex items-center justify-center text-3xl font-semibold text-primary">
-                              {applicant.fullName.slice(0, 1)}
-                            </div>
-                            <div className="flex-1">
-                              <div className="mb-1 flex items-center justify-between gap-3">
-                                <h4 className="text-lg font-semibold text-foreground">{applicant.fullName}</h4>
-                                <span className={`px-3 py-1 text-xs rounded-lg font-medium ${getStatusColor(applicant.status)}`}>
-                                  {responseStatusText[applicant.status] ?? applicant.status}
-                                </span>
+                      {selectedProject.responses.map((applicant) => {
+                        const isSelfApplicant = applicant.userId === currentUser.userId;
+                        const contractDisabled = applicant.status === 'accepted' || isSelfApplicant;
+
+                        return (
+                          <div key={applicant.responseId} className="border border-border rounded-xl p-5 hover:shadow-md transition-shadow">
+                            <div className="mb-4 flex items-start gap-4">
+                              <div className="w-16 h-16 bg-gradient-to-br from-primary/10 to-secondary/10 rounded-xl flex items-center justify-center text-3xl font-semibold text-primary">
+                                {applicant.fullName.slice(0, 1)}
                               </div>
-                              <p className="mb-3 text-sm text-muted-foreground">{applicant.description}</p>
-                              <div className="mb-3 flex flex-wrap gap-2">
-                                {applicant.skills.slice(0, 5).map((skill) => (
-                                  <span key={skill} className="rounded-lg bg-muted px-3 py-1 text-xs text-foreground">
-                                    {skill}
+                              <div className="flex-1">
+                                <div className="mb-1 flex items-center justify-between gap-3">
+                                  <h4 className="text-lg font-semibold text-foreground">{applicant.fullName}</h4>
+                                  <span className={`px-3 py-1 text-xs rounded-lg font-medium ${getStatusColor(applicant.status)}`}>
+                                    {responseStatusText[applicant.status] ?? applicant.status}
                                   </span>
-                                ))}
-                              </div>
-                              <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
-                                <span>{applicant.email}</span>
-                                <span>{applicant.phoneNumber}</span>
+                                </div>
+                                <p className="mb-3 text-sm text-muted-foreground">{applicant.description}</p>
+                                <div className="mb-3 flex flex-wrap gap-2">
+                                  {applicant.skills.slice(0, 5).map((skill) => (
+                                    <span key={skill} className="rounded-lg bg-muted px-3 py-1 text-xs text-foreground">
+                                      {skill}
+                                    </span>
+                                  ))}
+                                </div>
+                                <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
+                                  <span>{applicant.email}</span>
+                                  <span>{applicant.phoneNumber}</span>
+                                </div>
                               </div>
                             </div>
-                          </div>
 
-                          <div className="mb-4 rounded-lg bg-muted p-4">
-                            <p className="text-sm text-foreground">{applicant.title}</p>
-                          </div>
+                            <div className="mb-4 rounded-lg bg-muted p-4">
+                              <p className="text-sm text-foreground">{applicant.title}</p>
+                            </div>
 
-                          <button
-                            onClick={() => setSelectedApplicant(applicant)}
-                            disabled={applicant.status === 'accepted'}
-                            className="w-full px-4 py-2 bg-gradient-to-r from-primary to-secondary text-white rounded-lg hover:shadow-lg transition-all disabled:cursor-not-allowed disabled:opacity-60"
-                          >
-                            {applicant.status === 'accepted' ? 'Контракт уже предложен' : 'Заключить контракт'}
-                          </button>
-                        </div>
-                      ))}
+                            <button
+                              onClick={() => setSelectedApplicant(applicant)}
+                              disabled={contractDisabled}
+                              className="w-full px-4 py-2 bg-gradient-to-r from-primary to-secondary text-white rounded-lg hover:shadow-lg transition-all disabled:cursor-not-allowed disabled:opacity-60"
+                            >
+                              {isSelfApplicant
+                                ? 'Это ваш отклик'
+                                : applicant.status === 'accepted'
+                                  ? 'Контракт уже предложен'
+                                  : 'Заключить контракт'}
+                            </button>
+                          </div>
+                        );
+                      })}
                     </div>
                   )}
                 </div>
