@@ -17,6 +17,8 @@ export type FreelancerCard = {
   description: string;
   skills: string[];
   shortDescription: string;
+  rating: number | null;
+  ratingsCount: number;
 };
 
 export type PortfolioAlbum = {
@@ -126,6 +128,8 @@ type FreelancerNode = {
   freelancerId: string;
   skills: string;
   description: string;
+  freelancerRating: number | null;
+  ratingsCount: number;
   user: {
     userId: string;
     fullName: string;
@@ -241,6 +245,8 @@ function mapFreelancer(node: FreelancerNode): FreelancerCard {
     description: node.description,
     skills,
     shortDescription: truncate(node.description),
+    rating: node.freelancerRating,
+    ratingsCount: node.ratingsCount,
   };
 }
 
@@ -368,6 +374,8 @@ export async function fetchFreelancers() {
         freelancerId
         skills
         description
+        freelancerRating
+        ratingsCount
         user {
           userId
           fullName
@@ -482,6 +490,8 @@ export async function fetchFreelancerProfile(id: number) {
           freelancerId
           skills
           description
+          freelancerRating
+          ratingsCount
           user {
             userId
             fullName
@@ -570,6 +580,8 @@ export async function fetchMyProfileData(freelancerId: number) {
           freelancerId
           skills
           description
+          freelancerRating
+          ratingsCount
           user {
             userId
             fullName
@@ -627,6 +639,8 @@ export async function fetchMyProfileData(freelancerId: number) {
               freelancerId
               skills
               description
+              freelancerRating
+              ratingsCount
               user {
                 userId
                 fullName
@@ -719,6 +733,8 @@ export async function fetchEmployerProjects(employerId: number) {
               freelancerId
               skills
               description
+              freelancerRating
+              ratingsCount
               user {
                 userId
                 fullName

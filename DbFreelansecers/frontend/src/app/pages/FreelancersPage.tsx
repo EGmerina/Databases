@@ -1,7 +1,11 @@
 import { Link } from 'react-router';
-import { ArrowRight, Mail, Phone, Sparkles } from 'lucide-react';
+import { ArrowRight, Mail, Phone, Star } from 'lucide-react';
 import { fetchFreelancers } from '../lib/api';
 import { useAsyncData } from '../lib/useAsyncData';
+
+function formatRating(rating: number | null) {
+  return rating === null ? 'Новый' : rating.toFixed(1);
+}
 
 export function FreelancersPage() {
   const { data: freelancers, loading, error } = useAsyncData(fetchFreelancers, []);
@@ -49,6 +53,13 @@ export function FreelancersPage() {
                         {freelancer.fullName}
                       </h3>
                       <p className="mt-1 text-muted-foreground">{freelancer.shortDescription}</p>
+                    </div>
+                    <div className="flex shrink-0 items-center gap-2 rounded-lg bg-muted px-3 py-2 text-sm">
+                      <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                      <span className="font-semibold text-foreground">{formatRating(freelancer.rating)}</span>
+                      <span className="text-muted-foreground">
+                        {freelancer.ratingsCount > 0 ? `${freelancer.ratingsCount} оцен.` : 'профиль'}
+                      </span>
                     </div>
                    
                   </div>

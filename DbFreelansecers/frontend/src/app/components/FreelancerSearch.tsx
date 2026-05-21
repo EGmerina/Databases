@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router';
-import { Mail, Phone, Search } from 'lucide-react';
+import { Mail, Phone, Search, Star } from 'lucide-react';
 import { fetchFreelancers } from '../lib/api';
 import { useAsyncData } from '../lib/useAsyncData';
 
@@ -27,6 +27,10 @@ function matchesCategory(text: string, category: string) {
   }
 
   return true;
+}
+
+function formatRating(rating: number | null) {
+  return rating === null ? 'Новый' : rating.toFixed(1);
 }
 
 export function FreelancerSearch() {
@@ -124,7 +128,16 @@ export function FreelancerSearch() {
                 </div>
 
                 <div className="flex-1">
-                  <h3 className="mb-2 text-2xl font-semibold text-primary">{freelancer.fullName}</h3>
+                  <div className="mb-2 flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+                    <h3 className="text-2xl font-semibold text-primary">{freelancer.fullName}</h3>
+                    <div className="flex shrink-0 items-center gap-2 rounded-lg bg-muted px-3 py-2 text-sm">
+                      <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                      <span className="font-semibold text-foreground">{formatRating(freelancer.rating)}</span>
+                      <span className="text-muted-foreground">
+                        {freelancer.ratingsCount > 0 ? `${freelancer.ratingsCount} оцен.` : 'профиль'}
+                      </span>
+                    </div>
+                  </div>
                   <p className="mb-4 text-muted-foreground">{freelancer.description}</p>
 
                   <div className="mb-5 flex flex-wrap gap-2">

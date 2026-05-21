@@ -65,6 +65,10 @@ function buildDeadline(days: string) {
   return date.toISOString();
 }
 
+function formatRating(rating: number | null) {
+  return rating === null ? 'Новый' : rating.toFixed(1);
+}
+
 export function MyProfilePage() {
   const { currentUser, loading: authLoading } = useAuth();
   const freelancerId = currentUser?.freelancerId ?? null;
@@ -286,8 +290,10 @@ export function MyProfilePage() {
 
                       <div className="flex items-center gap-2">
                         <Star className="w-5 h-5 fill-yellow-400 text-yellow-400" />
-                        <span className="font-semibold text-xl">{contracts.length}</span>
-                        <span className="text-muted-foreground text-sm">контрактов</span>
+                        <span className="font-semibold text-xl">{formatRating(profile.rating)}</span>
+                        <span className="text-muted-foreground text-sm">
+                          {profile.ratingsCount > 0 ? `${profile.ratingsCount} оцен.` : 'профиль'}
+                        </span>
                       </div>
 
                       <div className="w-full pt-6 border-t border-border space-y-4 text-left">
@@ -368,7 +374,7 @@ export function MyProfilePage() {
                                   Контракт
                                 </button>
                               )}
-                              {response.status === 'pending' && (
+                              { (
                                 <button
                                   onClick={() => handleDeleteApplication(response.id)}
                                   disabled={actionLoading}

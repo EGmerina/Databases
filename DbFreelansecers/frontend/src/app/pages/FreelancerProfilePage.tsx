@@ -3,6 +3,10 @@ import { ArrowLeft, Briefcase, Heart, Mail, Phone, Star } from 'lucide-react';
 import { fetchFreelancerProfile, formatDate } from '../lib/api';
 import { useAsyncData } from '../lib/useAsyncData';
 
+function formatRating(rating: number | null) {
+  return rating === null ? 'Новый' : rating.toFixed(1);
+}
+
 export function FreelancerProfilePage() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -71,8 +75,10 @@ export function FreelancerProfilePage() {
 
                   <div className="flex items-center gap-2">
                     <Star className="w-5 h-5 fill-yellow-400 text-yellow-400" />
-                    <span className="font-semibold text-xl">Новый</span>
-                    <span className="text-muted-foreground text-sm">профиль</span>
+                    <span className="font-semibold text-xl">{formatRating(freelancer.rating)}</span>
+                    <span className="text-muted-foreground text-sm">
+                      {freelancer.ratingsCount > 0 ? `${freelancer.ratingsCount} оцен.` : 'профиль'}
+                    </span>
                   </div>
 
                 
